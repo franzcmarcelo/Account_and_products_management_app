@@ -54,6 +54,15 @@ class ProductProvider {
     final List<ProductModel> products = new List();
 
     if ( decodedData == null ) return [];
+
+    // FIXME:
+    // Para manejar cuando expire el token
+    // Si el decodede Data trae un error
+    if ( decodedData['error'] != null ) {
+      print('ERROR: Token Expirado!');
+      return [];
+    }
+
     decodedData.forEach((id, product) {
       print('Product: ${product['title']}');
       // > {available: true, title: reloj, value: 293.0}
@@ -75,7 +84,7 @@ class ProductProvider {
     return 1;
   }
 
-  /// Cloudinary Service
+  /// FIXME: Cloudinary Service
   /// Recibe la image de tipo File
   /// Devuelve el secure_url proporcionado por cloudinary
   Future<String> uploadImage( PickedFile image ) async {
@@ -115,7 +124,11 @@ class ProductProvider {
     }
 
     final resData = json.decode(res.body);
-    print('Response Data: $resData');
+    print('Cloudinary Service');
+    print('Image Upload Successful');
+    print('Secure_url: ${resData['secure_url']}');
+    // > {assts_id, public_id, version, version_id, signature, width, height, format, resource_type,
+    // create_at, tags, bytes, type, etag, placeholder, url, secure_url, original_filename}
 
     return resData['secure_url'];
   }

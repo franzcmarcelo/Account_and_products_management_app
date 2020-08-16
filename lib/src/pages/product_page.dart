@@ -1,8 +1,10 @@
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 
+import 'package:image_picker/image_picker.dart';
+
 import 'package:form_validation/src/model/product_model.dart';
-import 'package:form_validation/src/providers/products_provider.dart';
+import 'package:form_validation/src/bloc/provider.dart';
+
 import 'package:form_validation/src/utils/utils.dart' as utils;
 
 class ProductPage extends StatefulWidget {
@@ -17,8 +19,7 @@ class _ProductPageState extends State<ProductPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool _saving = false;
 
-  // Probando Firebase
-  final productProvider = new ProductProvider();
+  ProductsBloc productsBloc;
 
   ProductModel product = new ProductModel();
 
@@ -26,6 +27,8 @@ class _ProductPageState extends State<ProductPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    productsBloc = Provider.productsBloc(context);
 
     final ProductModel productArguments = ModalRoute.of(context).settings.arguments;
     if ( productArguments != null ) {
@@ -151,7 +154,7 @@ class _ProductPageState extends State<ProductPage> {
 
     // FIXME:
     if ( photo != null ){
-      product.urlPhoto = await productProvider.uploadImage(photo);
+      product.urlPhoto = await productsBloc.uploadPhoto(photo);
     }
 
 
@@ -161,9 +164,9 @@ class _ProductPageState extends State<ProductPage> {
       // FIXME: Firebase
       // Retorna un mapa que tiene un name que es id que asigna firebase
       // {name: -ME_yA_mhCCtS_6rNeXb}
-      productProvider.createProduct(product);
+      productsBloc.addProduct(product);
     } else {
-      productProvider.updateProduct(product);
+      productsBloc.updateProduct(product);
     }
 
     // setState(() { _saving = false; });
